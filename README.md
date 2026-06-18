@@ -36,18 +36,21 @@ graph LR
 
 ## Quick Start — Set Up the Hook (do this once)
 
-Add this to your VS Code Copilot user settings:
+1. **Open VS Code Settings (JSON):** Press `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`), type *"Preferences: Open User Settings (JSON)"*, and press Enter.
 
-```json
-"github.copilot.chat.agent.hooks": {
-  "SessionStart": [
-    {
-      "command": "if [ ! -f AGENTS.md ]; then bash <(curl -fsSL https://raw.githubusercontent.com/brajam/gh-llm-bootstrap/main/.github/scripts/hook-bootstrap.sh); fi",
-      "timeout": 30
-    }
-  ]
-}
-```
+2. **Add the hook:** Paste the following inside the top-level `{ }` of your `settings.json`. If you already have a `"github.copilot.chat.agent.hooks"` key, merge the `"SessionStart"` array into it instead.
+
+   ```json
+    "github.copilot.chat.agent.hooks": {
+        "SessionStart": [
+            {
+                "command": "if [ ! -f AGENTS.md ]; then bash <(curl -fsSL https://raw.githubusercontent.com/brajam/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh); fi",
+                "timeout": 30
+            }
+        ]
+   ```
+
+3. **Save** `settings.json` (`Ctrl+S`).
 
 That's it. Now:
 
