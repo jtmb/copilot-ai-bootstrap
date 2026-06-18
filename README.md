@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/brajam/gh-llm-bootstrap/main/.github/assets/logo.svg" alt="Copilot AI Bootstrap" width="120" />
+<!-- <img src="https://raw.githubusercontent.com/brajam/gh-llm-bootstrap/main/.github/assets/logo.svg" alt="Copilot AI Bootstrap" width="120" /> -->
 
-# ⚡ Copilot AI Bootstrap
+# Copilot AI Bootstrap
 ### Set Once — Auto-Bootstrap Every Project
 
 <p>
