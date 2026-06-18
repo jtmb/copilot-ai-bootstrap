@@ -24,10 +24,17 @@ Add this to your VS Code Copilot user settings (`github.copilot.chat.agent.hooks
 Now open any project, start a Copilot chat, and the hook auto-boostraps it.
 
 **What you get (in every project):**
-- `AGENTS.md` — core conventions (docs, comments, tests, DRY)
+- `AGENTS.md` — core conventions (13 sections: docs, comments, tests, DRY, security, error handling, config, more)
 - `.github/instructions/always-read-agents.instructions.md` — forces AI to read AGENTS.md before every code change
-- `.github/instructions/{framework}.instructions.md` — framework-specific rules (auto-detected)
+- `.github/instructions/{framework}.instructions.md` — framework-specific rules (auto-detected from 5 supported frameworks)
+- `.github/instructions/containers.instructions.md` — Docker/Compose conventions (multi-stage, non-root, HEALTHCHECK)
+- `.github/instructions/shell.instructions.md` — Shell script safety & portability (`set -euo pipefail`, quoting, traps)
+- `.github/instructions/sql.instructions.md` — SQL & migration best practices (parameterized queries, indexing, N+1)
+- `.github/instructions/api-design.instructions.md` — REST API design conventions (status codes, pagination, idempotency)
+- `.github/instructions/k8s.instructions.md` — Kubernetes/Helm conventions (security context, probes, resources)
+- `.github/instructions/typescript.instructions.md` — Standalone TypeScript rules (strict config, type safety, async patterns)
 - `.github/instructions/generic.instructions.md` — fallback for any file not covered
+- `.github/prompts/` — 3 slash commands (`/generate-docs`, `/repo-context`, `/write-docs`)
 - `docs/` — pre-seeded documentation templates (ARCHITECTURE.md, TECH-STACK.md, CONVENTIONS.md)
 - `USAGE.md` — this file
 
@@ -114,12 +121,20 @@ your-project/
 │   │   ├── python.instructions.md               ←   Python conventions
 │   │   ├── go.instructions.md                   ←   Go conventions
 │   │   ├── rust.instructions.md                 ←   Rust conventions
+│   │   ├── containers.instructions.md           ←   Docker/Compose conventions
+│   │   ├── shell.instructions.md                ←   Shell script conventions
+│   │   ├── sql.instructions.md                  ←   SQL & migration conventions
+│   │   ├── api-design.instructions.md           ←   REST API design conventions
+│   │   ├── k8s.instructions.md                  ←   Kubernetes/Helm conventions
+│   │   ├── typescript.instructions.md           ←   Standalone TypeScript conventions
 │   │   ├── generic.instructions.md              ←   Fallback for any file type
 │   │   └── {project-name}.instructions.md       ←   Your project-specific rules
 │   ├── prompts/                                 ← Task templates (invocable via /)
 │   │   ├── repo-context.prompt.md               ←   System identity & docs map
-│   │   └── generate-docs.prompt.md              ←   Fill docs/ from codebase scan
+│   │   ├── generate-docs.prompt.md              ←   Fill docs/ from codebase scan
+│   │   └── write-docs.prompt.md                 ←   Write READMEs, API docs, ADRs
 │   ├── hooks/                                   ← Deterministic enforcement (JSON)
+│   │   ├── session-start.json                   ←   Auto-bootstrap on Copilot session start
 │   │   ├── pre-tool-use.json                    ←   Validate before tool calls
 │   │   └── post-tool-use.json                   ←   Auto-lint after file edits
 │   ├── skills/                                  ← Multi-step workflows with assets
@@ -156,8 +171,6 @@ Adding support for a new language or framework (e.g., Ruby, Elixir, Zig):
 4. **Update `docs/TECH-STACK.md`** if relevant.
 
 5. **Test**: `./bootstrap.sh --dry-run --framework {name} /tmp/test` — verify the correct files are selected.
-
-6. **Create a `.github/instructions/{name}.instructions.md`** in the bootstrap repo. List it in this USAGE.md.
 
 ### Add a Project-Specific Rule
 
@@ -268,12 +281,18 @@ User-level examples: "I prefer single quotes", "Always use async/await over .the
 
 ## Framework Support Table
 
-| Framework | File | `applyTo` | Build Command | Test Command | Lint Command |
-|-----------|------|-----------|---------------|--------------|--------------|
-| Next.js | `nextjs.instructions.md` | `**/*.{tsx,ts,jsx,js,css}` | `next build` | `npm test` | `next lint` |
-| Python | `python.instructions.md` | `**/*.py` | — | `pytest` | `ruff check` |
-| Go | `go.instructions.md` | `**/*.go` | `go build ./...` | `go test ./...` | `golangci-lint run` |
-| Rust | `rust.instructions.md` | `**/*.rs` | `cargo build` | `cargo test` | `cargo clippy -- -D warnings` |
-| Generic | `generic.instructions.md` | `**` | Project-specific | Project-specific | Project-specific |
+| Framework | File | `applyTo` | Sections Covered |
+|-----------|------|-----------|------------------|
+| Next.js | `nextjs.instructions.md` | `**/*.{tsx,ts,jsx,js,css}` | Build/Test, Component Architecture, Global CSS, App Router, Secure Coding, Testing & QA, Naming |
+| Python | `python.instructions.md` | `**/*.py` | Build/Test, Type Hints, Docstrings, Project Structure, Testing, Code Quality, Imports, Secure Coding, Naming |
+| Go | `go.instructions.md` | `**/*.go` | Build/Test, Comments, Error Handling, Project Layout, Testing, Concurrency, General Practices, Secure Coding, Naming |
+| Rust | `rust.instructions.md` | `**/*.rs` | Build/Test, Documentation, Error Handling, Project Layout, Ownership, Testing, Clippy, General Practices, Secure Coding, Naming |
+| Containers | `containers.instructions.md` | `**/{Dockerfile,Containerfile,docker-compose*,.dockerignore}` | Multi-stage builds, Non-root user, Layer caching, .dockerignore, Digest pinning, HEALTHCHECK, Signal handling, Secrets hygiene, Image size, Compose conventions |
+| Shell | `shell.instructions.md` | `**/*.{sh,bash}` | set -euo pipefail, Quoting, Error handling, Temp files, Portability, Secrets, Organization |
+| SQL | `sql.instructions.md` | `**/*.sql` | Parameterized queries, Migration safety, Indexing, Connection pooling, Transactions, N+1 prevention, Query performance, Schema design |
+| API Design | `api-design.instructions.md` | `**/{routes,handlers,api,controllers,endpoints}/**/*.{ts,js,py,go,rs,java,rb}` | Status codes, Error shape, Versioning, Auth, Pagination, Rate limiting, Idempotency, HTTP methods |
+| Kubernetes | `k8s.instructions.md` | `**/{k8s,kubernetes,helm,charts,templates}/**/*.{yaml,yml}` | Security context, Resource limits, Probes, Network policies, Labels, Deployments, Services, Ingress, ConfigMaps, Helm |
+| TypeScript | `typescript.instructions.md` | `**/*.{ts,tsx}` | Strict config, Type safety, Error handling, Async patterns, Module system, Node.js conventions, Testing, Styling |
+| Generic | `generic.instructions.md` | `**` | Enforces AGENTS.md core rules (docs, comments, testing, DRY, secure coding, project structure, naming) |
 
 To contribute a new framework, see "Add a New Framework Overlay" above.

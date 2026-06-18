@@ -146,6 +146,13 @@ declare -a FILES=(
     ".github/hooks/session-start.json|.github/hooks/session-start.json|optional"
     ".github/workflows/ci.yml|.github/workflows/ci.yml|optional"
     ".github/scripts/hook-bootstrap.sh|hook-bootstrap.sh|optional"
+    ".github/instructions/containers.instructions.md|.github/instructions/containers.instructions.md|always"
+    ".github/instructions/shell.instructions.md|.github/instructions/shell.instructions.md|always"
+    ".github/instructions/sql.instructions.md|.github/instructions/sql.instructions.md|always"
+    ".github/instructions/api-design.instructions.md|.github/instructions/api-design.instructions.md|always"
+    ".github/instructions/k8s.instructions.md|.github/instructions/k8s.instructions.md|always"
+    ".github/instructions/typescript.instructions.md|.github/instructions/typescript.instructions.md|always"
+    ".github/prompts/write-docs.prompt.md|.github/prompts/write-docs.prompt.md|optional"
 )
 
 # Framework-specific overlays

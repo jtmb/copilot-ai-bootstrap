@@ -11,7 +11,7 @@ This is the meta-skill for maintaining the AI bootstrap repo. It guides you thro
 
 ## When to Use
 
-- Adding a new framework overlay (e.g., Ruby, Elixir, Zig)
+- Adding a new framework overlay (e.g., Ruby, Elixir, Zig) or cross-cutting instruction (e.g., Containers, SQL)
 - Modifying core rules in `AGENTS.md`
 - Adding or updating prompts, hooks, or skills
 - Fixing YAML frontmatter or `applyTo` patterns
@@ -71,6 +71,24 @@ AGENTS.md
 
 .github/instructions/{fw}.instructions.md
   └── References AGENTS.md conventions, extends with framework-specific rules
+
+.github/instructions/containers.instructions.md
+  └── Cross-cutting — applies to Dockerfile, Containerfile, docker-compose, .dockerignore
+
+.github/instructions/shell.instructions.md
+  └── Cross-cutting — applies to .sh/.bash files
+
+.github/instructions/sql.instructions.md
+  └── Cross-cutting — applies to .sql files, migrations
+
+.github/instructions/api-design.instructions.md
+  └── Cross-cutting — applies to route/handler/api/controller files
+
+.github/instructions/k8s.instructions.md
+  └── Cross-cutting — applies to k8s/helm/chart YAML files
+
+.github/instructions/typescript.instructions.md
+  └── Cross-cutting — applies to .ts/.tsx files (non-Next.js or alongside it)
 
 .github/prompts/
   └── References docs/ for detailed conventions

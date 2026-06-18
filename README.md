@@ -1,4 +1,21 @@
-# Copilot AI Bootstrap — Set Once, Auto-Bootstrap Every Project
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/brajam/gh-llm-bootstrap/main/.github/assets/logo.svg" alt="Copilot AI Bootstrap" width="120" />
+
+# ⚡ Copilot AI Bootstrap
+### Set Once — Auto-Bootstrap Every Project
+
+<p>
+  <img src="https://img.shields.io/badge/AGENTS.md-13%20sections-blue?style=flat-square" alt="AGENTS.md sections" />
+  <img src="https://img.shields.io/badge/instructions-13%20files-green?style=flat-square" alt="Instruction files" />
+  <img src="https://img.shields.io/badge/prompts-3%20templates-orange?style=flat-square" alt="Prompts" />
+  <img src="https://img.shields.io/badge/frameworks-5%20%2B%206%20cross--cutting-purple?style=flat-square" alt="Frameworks" />
+  <img src="https://img.shields.io/badge/total-2%2C164%20lines-informational?style=flat-square" alt="Total lines" />
+</p>
+
+---
+
+</div>
 
 **The problem:** Every time you start a new project (or open an existing one with VS Code Copilot), the AI doesn't know your conventions. It doesn't know to keep docs in sync, write comments, run tests before claiming done, or use your framework's idioms. You end up repeating the same instructions in every chat, or worse — the AI drifts from your standards and you spend time fixing its output.
 
@@ -47,15 +64,18 @@ That's it. Now:
 
 | Layer | File | Purpose |
 |-------|------|---------|
-| **Core** | `AGENTS.md` | Universal rules (docs sync, comments, testing, DRY) |
-| **Framework** | `.github/instructions/{fw}.instructions.md` | Build commands, language idioms, directory conventions |
-| **Docs** | `docs/` (4 files) | Templates the AI fills in as it works |
-| **Prompts** | `.github/prompts/` (2 files) | `/generate-docs` and `/repo-context` slash commands |
+| **Core** | `AGENTS.md` (172 lines, 13 sections) | Universal quality rules — docs, comments, tests, DRY, security, error handling |
+| **Frameworks** | `.github/instructions/{fw}.instructions.md` (4 files) | Next.js, Python, Go, Rust — build commands, idioms, project layout |
+| **Cross-cutting** | `.github/instructions/{domain}.instructions.md` (6 files) | Containers, Shell, SQL, API Design, Kubernetes, TypeScript — everything in between |
+| **Docs** | `docs/` (4 files) | Templates the AI fills in as it works — architecture, tech stack, conventions |
+| **Prompts** | `.github/prompts/` (3 files) | `/generate-docs`, `/repo-context`, `/write-docs` slash commands |
 | **Hooks** | `.github/hooks/` (3 files) | PreToolUse guard, SessionStart bootstrap, PostToolUse lint |
 | **CI** | `.github/workflows/ci.yml` | Matrix CI for lint/build/test |
 | **Usage** | `USAGE.md` | Handbook for adding your own rules |
 
-## Supported Frameworks
+## Coverage — Every File Type Has Rules
+
+### Framework Detection (auto-bootstrapped by hook)
 
 | Framework | Detected by | `applyTo` |
 |-----------|------------|-----------|
@@ -65,22 +85,45 @@ That's it. Now:
 | Rust | `Cargo.toml` | `**/*.rs` |
 | Generic (fallback) | none of the above | `**` |
 
+### Cross-Cutting Instructions (always included)
+
+| Domain | `applyTo` | What It Covers |
+|--------|-----------|-----------------|
+| 🐳 Containers | `Dockerfile`, `docker-compose*`, `.dockerignore` | Multi-stage builds, non-root user, HEALTHCHECK, secrets |
+| 🐚 Shell | `**/*.{sh,bash}` | `set -euo pipefail`, quoting, error handling, portability |
+| 🗄️ SQL | `**/*.sql` | Parameterized queries, migrations, indexing, N+1 prevention |
+| 🔌 API Design | `**/{routes,handlers,api}/**/*` | Status codes, error shapes, pagination, idempotency |
+| ☸️ Kubernetes | `**/{k8s,helm,charts}/**/*.{yaml,yml}` | Security context, probes, resources, network policies |
+| 📘 TypeScript | `**/*.{ts,tsx}` | Strict config, type safety, async patterns, Node.js |
+
 ## Architecture — Layered Rules
 
 ```mermaid
 graph TD
     A[AI receives task] --> B[always-read-agents.instructions.md fires]
-    B --> C[AI reads AGENTS.md — core rules]
+    B --> C[AI reads AGENTS.md — 13 core sections]
     C --> D{What files are involved?}
     D -->|.tsx/.ts files| E[nextjs.instructions.md]
     D -->|.py files| F[python.instructions.md]
     D -->|.go files| G[go.instructions.md]
     D -->|.rs files| H[rust.instructions.md]
+    D -->|Dockerfile / compose| X1[containers.instructions.md]
+    D -->|.sh / .bash| X2[shell.instructions.md]
+    D -->|.sql| X3[sql.instructions.md]
+    D -->|API routes| X4[api-design.instructions.md]
+    D -->|k8s / helm| X5[k8s.instructions.md]
+    D -->|.ts / .tsx standalone| X6[typescript.instructions.md]
     D -->|anything else| I[generic.instructions.md]
-    E --> J[AI follows framework rules]
+    E --> J[AI follows layered rules]
     F --> J
     G --> J
     H --> J
+    X1 --> J
+    X2 --> J
+    X3 --> J
+    X4 --> J
+    X5 --> J
+    X6 --> J
     I --> J
     J --> K[Hooks enforce deterministically]
     K --> L[CI catches what AI misses]
@@ -97,13 +140,23 @@ graph TD
 | **Enforcement** | `.github/hooks/*.json` | Agent lifecycle events | Deterministic guardrails (block commands, auto-lint) |
 | **Safety net** | `.github/workflows/ci.yml` | Push / PR | Lint, type-check, test, build |
 
-## Key Rules (from AGENTS.md)
+## Key Rules (from AGENTS.md — 13 Sections)
 
-- **Docs in sync**: Every code change updates `docs/`
-- **Code comments mandatory**: Every function and export explains why
-- **Test before done**: Lint, build, test, manual smoke — all must pass
-- **Don't repeat yourself**: Extract shared logic, no duplicated code
-- **Pre-read AGENTS.md**: The `.github/instructions/always-read-agents.instructions.md` forces a re-read before every code change
+| Section | Mandate |
+|---------|---------|
+| 📝 **Code Comments** | Every function & export explains **why** |
+| 📚 **Docs Sync** | Every code change updates `docs/` same turn |
+| 🧪 **Test Before Done** | Lint → build → test → smoke — all must pass |
+| 🔁 **Don't Repeat Yourself** | Extract shared logic, one authoritative location |
+| 🔒 **Secure Coding** | No secrets in code, validate input, least privilege, audit deps |
+| 📁 **Project Structure** | Feature grouping, co-located tests, one concern per file |
+| 🔀 **Git & Version Control** | Atomic commits, Conventional Commits, no generated files |
+| 👁️ **Observability** | Structured logging, health checks, distributed tracing |
+| ⚡ **Performance** | Measure first, N+1 is a bug, paginate, timeout everything |
+| ❌ **Error Handling** | Never swallow, wrap with context, typed errors, crash-only |
+| ⚙️ **Configuration** | One config module, validate at startup, 12-factor, secrets ≠ config |
+| 🏷️ **Naming Conventions** | Descriptive, no abbreviations, language-consistent casing |
+| 🔄 **Pre-read AGENTS.md** | The `always-read-agents` instruction forces re-read before every code change |
 
 ## Manual Bootstrap (optional)
 

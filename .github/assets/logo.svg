@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#161b22;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bolt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a371f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a371f7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="124" fill="url(#bg)" stroke="#30363d" stroke-width="4" />
+
+  <!-- Outer ring -->
+  <circle cx="128" cy="128" r="110" fill="none" stroke="#21262d" stroke-width="2" stroke-dasharray="8 4" />
+
+  <!-- Lightning bolt (AI/copilot) -->
+  <g filter="url(#glow)">
+    <path d="M118 40 L94 100 L62 108 L108 148 L98 216 L126 160 L156 152 L112 112 L134 72 Z"
+          fill="url(#bolt)" opacity="0.9" />
+  </g>
+
+  <!-- Gear teeth (bootstrap/automation) — 8 teeth around the bolt -->
+  <g fill="url(#gear)" opacity="0.7">
+    <!-- Top -->
+    <rect x="118" y="16" width="20" height="14" rx="3" />
+    <!-- Top-right -->
+    <rect x="190" y="40" width="14" height="20" rx="3" transform="rotate(45 197 50)" />
+    <!-- Right -->
+    <rect x="226" y="118" width="14" height="20" rx="3" />
+    <!-- Bottom-right -->
+    <rect x="190" y="196" width="14" height="20" rx="3" transform="rotate(-45 197 206)" />
+    <!-- Bottom -->
+    <rect x="118" y="226" width="20" height="14" rx="3" />
+    <!-- Bottom-left -->
+    <rect x="52" y="196" width="14" height="20" rx="3" transform="rotate(45 59 206)" />
+    <!-- Left -->
+    <rect x="16" y="118" width="14" height="20" rx="3" />
+    <!-- Top-left -->
+    <rect x="52" y="40" width="14" height="20" rx="3" transform="rotate(-45 59 50)" />
+  </g>
+
+  <!-- Inner connecting ring -->
+  <circle cx="128" cy="128" r="42" fill="none" stroke="#30363d" stroke-width="2" />
+  <circle cx="128" cy="128" r="38" fill="#0d1117" stroke="#30363d" stroke-width="1" />
+
+  <!-- Sparkle dots -->
+  <circle cx="156" cy="64" r="3" fill="#a371f7" opacity="0.6" />
+  <circle cx="100" cy="192" r="3" fill="#58a6ff" opacity="0.6" />
+  <circle cx="192" cy="128" r="2" fill="#a371f7" opacity="0.4" />
+  <circle cx="64" cy="128" r="2" fill="#58a6ff" opacity="0.4" />
+</svg>

@@ -1,5 +1,5 @@
 ---
-description: "Use when working with Next.js or TypeScript/React files. Covers App Router conventions, component patterns, global stylesheet rules, and build commands."
+description: "Use when working with Next.js or TypeScript/React files. Covers App Router conventions, component patterns, global stylesheet rules, secure coding, testing & QA, naming conventions, and build commands."
 applyTo: "**/*.{tsx,ts,jsx,js,css}"
 ---
 
@@ -49,3 +49,31 @@ This is NOT the Next.js you know. This version may have breaking changes — API
 - `not-found.tsx` — 404 UI
 - Route groups: `(groupName)/` — organizational, don't affect URL
 - Dynamic routes: `[param]/` — accessed via `params` prop
+
+## Secure Coding
+
+- **No secrets in client components.** `NEXT_PUBLIC_` env vars are bundled into the browser — only use them for non-sensitive config. All secrets stay in Server Components, Route Handlers, or server-only utilities.
+- **Sanitize user input.** Use `DOMPurify` for rich text, React's built-in XSS protection for JSX (never `dangerouslySetInnerHTML` without sanitizing first).
+- **API Route Handlers must authenticate.** Every `/api/` route checks auth/session before processing. Use middleware for shared auth logic.
+- **CSP headers for production.** Set Content-Security-Policy headers via `next.config.js` or middleware to prevent XSS and data injection.
+- **Validate all search params and dynamic route params.** `searchParams` and `params` are user-controlled — treat them as untrusted input. Use Zod or similar for validation.
+- **No secrets in `next.config.js` values exposed to the client.** Anything in `env` or `publicRuntimeConfig` goes to the browser.
+
+## Testing & QA
+
+- **Component tests:** Use React Testing Library. Test behavior, not implementation — assert what the user sees, not internal state.
+- **Accessibility (a11y):** Install `@axe-core/react` and run a11y audits in CI. Every new component must be keyboard-navigable and screen-reader friendly. Use semantic HTML (`<button>`, `<nav>`, `<main>`) over `<div>` with click handlers.
+- **E2E tests:** Use Playwright or Cypress for critical user flows (login, checkout, onboarding). Don't test every page — target high-value paths.
+- **Visual regression:** Consider Percy or Chromatic for component-level visual diffs on PRs.
+- **Lighthouse in CI:** Run Lighthouse audits on key pages. Performance < 90, a11y < 95, or SEO < 90 should fail the check.
+
+## Naming Conventions
+
+- **Files:** kebab-case (`user-profile.tsx`, `use-auth.ts`). Exception: `layout.tsx`, `page.tsx`, `loading.tsx`, `error.tsx` are fixed by Next.js convention.
+- **Components:** PascalCase (`UserProfile`, `SignUpForm`). The component name must match the file name.
+- **Functions/variables:** camelCase (`getUserById`, `isAuthenticated`)
+- **Constants:** UPPER_CASE (`MAX_RETRIES`, `API_BASE_URL`)
+- **Types/interfaces:** PascalCase (`User`, `ApiResponse<T>`). No `I` prefix on interfaces.
+- **Hooks:** `use` prefix (`useAuth`, `useDebounce`)
+- **Event handlers:** `handle` prefix (`handleClick`, `handleSubmit`)
+- **Props types:** `{ComponentName}Props` (`UserProfileProps`)

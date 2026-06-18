@@ -1,5 +1,5 @@
 ---
-description: "Use when working with Python files. Covers type hints, docstrings, formatting, testing, and project structure conventions."
+description: "Use when working with Python files. Covers type hints, docstrings, secure coding, testing & QA, naming conventions, formatting, and project structure conventions."
 applyTo: "**/*.py"
 ---
 
@@ -100,3 +100,33 @@ project/
 - Standard library first, then third-party, then local — each group separated by a blank line
 - No wildcard imports (`from module import *`)
 - No circular imports — restructure if you encounter them
+
+## Secure Coding
+
+- **No secrets in code.** Use `os.environ.get()` or a secrets manager. Never commit `.env` files — add them to `.gitignore`. Use `python-dotenv` for local development only.
+- **Parameterized queries only.** Never use f-strings or `%` formatting in SQL. Use SQLAlchemy parameterized queries, or for raw SQL use `cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))`.
+- **No `shell=True` in subprocess.** Use `subprocess.run()` with a list of arguments, not a single string with `shell=True`. If you must shell out, use `shlex.quote()` on every argument.
+- **Validate and sanitize all input.** Use Pydantic models for API input validation. Reject unknown fields. Set `extra = "forbid"` on Pydantic models exposed to external input.
+- **Dependency hygiene.** Run `pip-audit` regularly. Pin dependencies with hashes in `requirements.txt` or use a lockfile (`poetry.lock`, `Pipfile.lock`). Don't install packages from URLs without verifying checksums.
+- **Use `secrets` module for cryptography.** Never use `random` for tokens, passwords, or session IDs. Use `secrets.token_hex()` or `secrets.token_urlsafe()`.
+- **Set secure defaults.** `DEBUG=False` in production. HTTPS enforced. Secure cookie flags (`HttpOnly`, `SameSite=Lax`, `Secure`). Use `bcrypt` or `argon2` for password hashing — never `hashlib` directly.
+
+## Testing & QA
+
+- **Coverage thresholds:** Set minimum coverage in `pyproject.toml` (`[tool.coverage.report] fail_under = 80`). Don't just aim for coverage — test behavior, not implementation.
+- **Property-based testing:** Use `hypothesis` for functions with complex input spaces (parsers, validators, serializers). It finds edge cases you won't think of.
+- **Test isolation:** Every test must be independent. No shared mutable state between tests. Use `conftest.py` fixtures with `scope="function"` (the default).
+- **CI pipeline:** `ruff check` → `mypy` → `pytest` → `pip-audit` — in that order. Fail fast on lint/type errors before running tests.
+- **Snapshot testing:** Use `syrupy` or `pytest-snapshot` for API response shapes and complex data structures that should be stable.
+- **Mutation testing (optional, for critical paths):** Use `mutmut` or `cosmic-ray` on security-sensitive and financial code to verify test quality.
+
+## Naming Conventions
+
+- **Files:** snake_case (`user_service.py`, `test_auth.py`)
+- **Classes:** PascalCase (`UserService`, `ApiClient`)
+- **Functions/variables:** snake_case (`get_user_by_id`, `max_retries`)
+- **Constants:** UPPER_CASE (`MAX_CONNECTIONS`, `DEFAULT_TIMEOUT`)
+- **Private members:** `_` prefix (`_internal_method`, `_cache`)
+- **"Magic" attributes:** `__` prefix for Python dunder methods only (`__init__`, `__str__`); avoid double-underscore name mangling
+- **Boolean variables:** `is_` or `has_` prefix (`is_active`, `has_permission`)
+- **Packages/modules:** short, lowercase, no underscores unless necessary for clarity

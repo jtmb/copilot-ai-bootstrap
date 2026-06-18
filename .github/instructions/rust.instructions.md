@@ -1,5 +1,5 @@
 ---
-description: "Use when working with Rust files. Covers formatting with rustfmt, clippy lints, testing, project layout, error handling, and ownership patterns."
+description: "Use when working with Rust files. Covers formatting, clippy lints, testing, secure coding, naming conventions, project layout, error handling, and ownership patterns."
 applyTo: "**/*.rs"
 ---
 
@@ -114,3 +114,34 @@ expect_used = "warn"
 - Derive common traits: `Debug`, `Clone`, `PartialEq`, `Eq`, `Hash`, `Serialize`, `Deserialize`
 - Use `tracing` crate for structured logging (not `println!` or `log` crate directly)
 - Async: prefer `tokio` runtime; use `async_trait` for async trait methods
+
+## Secure Coding
+
+- **No secrets in code.** Use `std::env::var()` or a secrets manager. Use `dotenvy` for local development `.env` files — never commit `.env`.
+- **Justify every `unsafe` block.** Every `unsafe` must have a `// SAFETY:` comment explaining why the invariants are upheld. If you can't write that comment, don't use `unsafe`. Unsafe blocks should be as small as possible.
+- **No `unwrap()` or `expect()` in library code.** Libraries should propagate errors via `Result`. Application binaries may use `expect()` for unrecoverable startup failures only.
+- **Input validation.** Validate all external input — HTTP bodies, CLI args, file contents — before processing. Use `validator` crate for derive-based validation on structs.
+- **Dependency auditing.** Run `cargo audit` in CI. Pin dependencies with `Cargo.lock` (committed for binaries, in `.gitignore` for libraries). Review `cargo-deny` for license compliance and duplicate dependencies.
+- **Index bounds checking.** Use `.get()` instead of `[]` when the index is not guaranteed valid. Prefer iterators over manual indexing — they're both safer and faster.
+- **Sensitive data zeroing.** Use `zeroize` crate to clear secrets from memory after use. Use `secrecy` crate for wrapping secrets (it implements `Debug` without leaking the value).
+
+## Testing & QA
+
+- **Doctests run in CI.** Every public function with a doc example compiles and runs as a test. Keep examples working — they are the first line of documentation.
+- **Fuzz testing:** Add `cargo-fuzz` targets for parsers, decoders, and any function that accepts raw bytes or strings. Run fuzzers periodically in CI.
+- **Benchmarks:** Use `criterion` crate for benchmarking. Run benchmarks before and after performance changes. Document benchmark results in commit messages for significant changes.
+- **Coverage:** Use `cargo-tarpaulin` or `cargo-llvm-cov` for coverage reports. Enforce a minimum threshold (suggest 70%) in CI.
+- **Miri (undefined behavior detection):** Run `cargo miri test` on `unsafe` code paths to catch undefined behavior and subtle bugs.
+- **Test organization:** Unit tests in `#[cfg(test)] mod tests` blocks within the source file. Integration tests in `tests/`. Use `common/mod.rs` in `tests/` for shared integration test helpers.
+
+## Naming Conventions
+
+- **Files:** snake_case (`user_service.rs`, `auth_tests.rs`)
+- **Types (structs, enums, traits, type aliases):** PascalCase (`UserService`, `ConnectionPool`, `IntoIterator`)
+- **Functions/variables:** snake_case (`get_user_by_id`, `max_retries`)
+- **Consts/statics:** SCREAMING_SNAKE_CASE (`MAX_CONNECTIONS`, `DEFAULT_TIMEOUT`)
+- **Macros:** snake_case or PascalCase (follow standard library convention for the macro name)
+- **Crate names:** snake_case, preferably single word (`serde`, `reqwest`). Don't use `rust-` or `rs-` prefixes.
+- **Feature flags:** snake_case in `Cargo.toml` (`[features] enable-tls = []`)
+- **Constructor convention:** `new()` for the simplest constructor, `with_*()` for builder methods. If fallible, use a `build()` method that returns `Result`.
+- **Avoid redundant prefixes.** In module `auth`, the type is `Token` not `AuthToken` — callers use `auth::Token`. In module `models`, it's `User` not `UserModel`.
