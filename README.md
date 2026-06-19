@@ -1,6 +1,6 @@
 <div align="center">
 
-<!-- <img src="https://raw.githubusercontent.com/brajam/copilot-ai-bootstrap/main/.github/assets/logo.svg" alt="Copilot AI Bootstrap" width="120" /> -->
+<!-- <img src="https://raw.githubusercontent.com/jtmb/copilot-ai-bootstrap/main/.github/assets/logo.svg" alt="Copilot AI Bootstrap" width="120" /> -->
 
 # Copilot AI Bootstrap
 ### Set Once — Auto-Bootstrap Every Project
@@ -46,7 +46,7 @@ VS Code Copilot reads hooks from `~/.copilot/hooks/` (global, applies to every p
         "SessionStart": [
             {
                 "type": "command",
-                "command": "if [ ! -f AGENTS.md ]; then curl -fsSL https://raw.githubusercontent.com/brajam/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh | bash; fi"
+                "command": "if [ ! -f AGENTS.md ]; then curl -fsSL https://raw.githubusercontent.com/jtmb/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh | bash; fi"
             }
         ]
     }
@@ -169,7 +169,7 @@ graph TD
 If you can't use hooks, or want to bootstrap once:
 
 ```bash
-git clone --depth 1 https://github.com/brajam/copilot-ai-bootstrap.git
+git clone --depth 1 https://github.com/jtmb/copilot-ai-bootstrap.git
 ./copilot-ai-bootstrap/.github/scripts/bootstrap.sh --framework python /path/to/your-project
 ```
 

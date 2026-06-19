@@ -16,7 +16,7 @@ VS Code Copilot reads hooks from `~/.copilot/hooks/` (global, applies to every p
         "SessionStart": [
             {
                 "type": "command",
-                "command": "if [ ! -f AGENTS.md ]; then curl -fsSL https://raw.githubusercontent.com/brajam/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh | bash; fi"
+                "command": "if [ ! -f AGENTS.md ]; then curl -fsSL https://raw.githubusercontent.com/jtmb/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh | bash; fi"
             }
         ]
     }
@@ -50,7 +50,7 @@ If you can't use hooks, bootstrap manually:
 
 ```bash
 # One-liner — clone and bootstrap in one go
-git clone --depth 1 https://github.com/brajam/copilot-ai-bootstrap.git && \
+git clone --depth 1 https://github.com/jtmb/copilot-ai-bootstrap.git && \
   ./copilot-ai-bootstrap/.github/scripts/bootstrap.sh --framework python --project-name my-backend /path/to/project
 
 # Or interactive mode
