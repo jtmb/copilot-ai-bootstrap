@@ -6,22 +6,26 @@ This is your handbook for working with the layered agent instruction system. Whe
 
 ## Quick-Start: Set Up the Hook (do this once)
 
-This repo is consumed as a hook. Configure it once in your VS Code Copilot user settings, and every project auto-bootstraps.
+VS Code Copilot reads hooks from `~/.copilot/hooks/` (global, applies to every project). Create this file:
 
-Add this to your VS Code Copilot user settings (`github.copilot.chat.agent.hooks`):
+**`~/.copilot/hooks/trigger-bootstrap.json`**
 
 ```json
 {
-  "SessionStart": [
-    {
-      "command": "if [ ! -f AGENTS.md ]; then bash <(curl -fsSL https://raw.githubusercontent.com/jtmb/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh); fi",
-      "timeout": 30
+    "hooks": {
+        "SessionStart": [
+            {
+                "type": "command",
+                "command": "if [ ! -f AGENTS.md ]; then curl -fsSL https://raw.githubusercontent.com/brajam/copilot-ai-bootstrap/main/.github/scripts/hook-bootstrap.sh | bash; fi"
+            }
+        ]
     }
-  ]
 }
 ```
 
-Now open any project, start a Copilot chat, and the hook auto-boostraps it.
+Now open any project, start a Copilot chat, and the hook auto-bootstraps it.
+
+> **Where hooks live:** `~/.copilot/hooks/*.json` — NOT in `settings.json`. Each `.json` file registers lifecycle hooks (`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`).
 
 **What you get (in every project):**
 - `AGENTS.md` — core conventions (13 sections: docs, comments, tests, DRY, security, error handling, config, more)
@@ -46,7 +50,7 @@ If you can't use hooks, bootstrap manually:
 
 ```bash
 # One-liner — clone and bootstrap in one go
-git clone --depth 1 https://github.com/jtmb/copilot-ai-bootstrap.git && \
+git clone --depth 1 https://github.com/brajam/copilot-ai-bootstrap.git && \
   ./copilot-ai-bootstrap/.github/scripts/bootstrap.sh --framework python --project-name my-backend /path/to/project
 
 # Or interactive mode
